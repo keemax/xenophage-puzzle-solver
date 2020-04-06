@@ -3,6 +3,7 @@
 # X = 1
 # / = 2
 # T = 3
+import copy
 from collections import deque
 
 solution = 1
@@ -14,76 +15,14 @@ initial = [
 seen = set()
 
 
-def top_left(puzzle):
-    return [
-        [(puzzle[0][0] + 1) % 4, (puzzle[0][1] + 1) % 4,  (puzzle[0][2] + 1) % 4],
-        [(puzzle[1][0] + 1) % 4, puzzle[1][1], puzzle[1][2]],
-        [(puzzle[2][0] + 1) % 4, puzzle[2][1], puzzle[2][2]]
-    ]
-
-
-def top_middle(puzzle):
-    return [
-        [(puzzle[0][0] + 1) % 4, (puzzle[0][1] + 1) % 4,  (puzzle[0][2] + 1) % 4],
-        [puzzle[1][0], (puzzle[1][1] + 1) % 4, puzzle[1][2]],
-        [puzzle[2][0], (puzzle[2][1] + 1) % 4, puzzle[2][2]]
-    ]
-
-
-def top_right(puzzle):
-    return [
-        [(puzzle[0][0] + 1) % 4, (puzzle[0][1] + 1) % 4,  (puzzle[0][2] + 1) % 4],
-        [puzzle[1][0], puzzle[1][1], (puzzle[1][2] + 1) % 4],
-        [puzzle[2][0], puzzle[2][1], (puzzle[2][2] + 1) % 4]
-    ]
-
-
-def middle_left(puzzle):
-    return [
-        [(puzzle[0][0] + 1) % 4, puzzle[0][1],  puzzle[0][2]],
-        [(puzzle[1][0] + 1) % 4, (puzzle[1][1] + 1) % 4, (puzzle[1][2] + 1) % 4],
-        [(puzzle[2][0] + 1) % 4, puzzle[2][1], puzzle[2][2]]
-    ]
-
-
-def middle(puzzle):
-    return [
-        [puzzle[0][0], (puzzle[0][1] + 1) % 4,  puzzle[0][2]],
-        [(puzzle[1][0] + 1) % 4, (puzzle[1][1] + 1) % 4, (puzzle[1][2] + 1) % 4],
-        [puzzle[2][0], (puzzle[2][1] + 1) % 4, puzzle[2][2]]
-    ]
-
-
-def middle_right(puzzle):
-    return [
-        [puzzle[0][0], puzzle[0][1],  (puzzle[0][2] + 1) % 4],
-        [(puzzle[1][0] + 1) % 4, (puzzle[1][1] + 1) % 4, (puzzle[1][2] + 1) % 4],
-        [puzzle[2][0], puzzle[2][1], (puzzle[2][2] + 1) % 4]
-    ]
-
-
-def bottom_left(puzzle):
-    return [
-        [(puzzle[0][0] + 1) % 4, puzzle[0][1],  puzzle[0][2]],
-        [(puzzle[1][0] + 1) % 4, puzzle[1][1], puzzle[1][2]],
-        [(puzzle[2][0] + 1) % 4, (puzzle[2][1] + 1) % 4, (puzzle[2][2] + 1) % 4]
-    ]
-
-
-def bottom_middle(puzzle):
-    return [
-        [puzzle[0][0], (puzzle[0][1] + 1) % 4,  puzzle[0][2]],
-        [puzzle[1][0], (puzzle[1][1] + 1) % 4, puzzle[1][2]],
-        [(puzzle[2][0] + 1) % 4, (puzzle[2][1] + 1) % 4, (puzzle[2][2] + 1) % 4]
-    ]
-
-
-def bottom_right(puzzle):
-    return [
-        [puzzle[0][0], puzzle[0][1],  (puzzle[0][2] + 1) % 4],
-        [puzzle[1][0], puzzle[1][1], (puzzle[1][2] + 1) % 4],
-        [(puzzle[2][0] + 1) % 4, (puzzle[2][1] + 1) % 4, (puzzle[2][2] + 1) % 4]
-    ]
+def new_state(old_state, row, col):
+    state = copy.deepcopy(old_state)
+    for i in range(len(state[row])):
+        state[row][i] = (state[row][i] + 1) % 4
+    for i in range(len(state)):
+        if i != row:
+            state[i][col] = (state[i][col] + 1) % 4
+    return state
 
 
 def is_solved(puzzle):
@@ -126,15 +65,15 @@ def main():
             print_solution(puzzle_tup)
             solved = True
         else:
-            puzzles.append((top_left(p), 'top left', puzzle_tup))
-            puzzles.append((top_middle(p), 'top middle', puzzle_tup))
-            puzzles.append((top_right(p), 'top right', puzzle_tup))
-            puzzles.append((middle_left(p), 'middle left', puzzle_tup))
-            puzzles.append((middle(p), 'middle', puzzle_tup))
-            puzzles.append((middle_right(p), 'middle right', puzzle_tup))
-            puzzles.append((bottom_left(p), 'bottom left', puzzle_tup))
-            puzzles.append((bottom_middle(p), 'bottom middle', puzzle_tup))
-            puzzles.append((bottom_right(p), 'bottom right', puzzle_tup))
+            puzzles.append((new_state(p, 0, 0), 'top left', puzzle_tup))
+            puzzles.append((new_state(p, 0, 1), 'top middle', puzzle_tup))
+            puzzles.append((new_state(p, 0, 2), 'top right', puzzle_tup))
+            puzzles.append((new_state(p, 1, 0), 'middle left', puzzle_tup))
+            puzzles.append((new_state(p, 1, 1), 'middle', puzzle_tup))
+            puzzles.append((new_state(p, 1, 2), 'middle right', puzzle_tup))
+            puzzles.append((new_state(p, 2, 0), 'bottom left', puzzle_tup))
+            puzzles.append((new_state(p, 2, 1), 'bottom middle', puzzle_tup))
+            puzzles.append((new_state(p, 2, 2), 'bottom right', puzzle_tup))
     if not solved:
         print('no solution')
 
